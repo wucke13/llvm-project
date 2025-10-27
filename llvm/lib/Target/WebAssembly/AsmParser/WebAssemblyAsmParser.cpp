@@ -947,15 +947,71 @@ public:
           // Should we also allow `mutable` and `mut` here for clarity?
           return error("Unknown type in .globaltype modifier: ", TypeTok);
       }
+
+      // wasm::WasmValue WV;
+
+      // if (isNext(AsmToken::Comma)) {
+      //   if (expect(AsmToken::TokenKind::Integer, "Integer"))
+      //     return error("Expected integer token", TypeTok);
+       
+      //   auto ValToken = Lexer.getTok();
+      //   uint64_t Val = ValToken.getIntVal();
+      //   WV.Int32 = Val;
+      // }
+
       // Now set this symbol with the correct type.
       auto *WasmSym =
           static_cast<MCSymbolWasm *>(Ctx.getOrCreateSymbol(SymName));
       WasmSym->setType(wasm::WASM_SYMBOL_TYPE_GLOBAL);
       WasmSym->setGlobalType(wasm::WasmGlobalType{uint8_t(*Type), Mutable});
+      // WasmSym->setGlobalInitValue(WV);
       // And emit the directive again.
       TOut.emitGlobalType(WasmSym);
       return expect(AsmToken::EndOfStatement, "EOL");
     }
+
+    // if (DirectiveID.getString() == ".globalinitvalue") {
+    //   auto SymName = expectIdent();
+    //   if (SymName.empty())
+    //     return ParseStatus::Failure;
+    //   if (expect(AsmToken::Comma, ","))
+    //     return ParseStatus::Failure;
+    //   auto ExprTok = Lexer.getTok();
+
+    //   wasm::WasmValue WV;
+
+    //   if (!Ctx.getSymbols().contains(SymName))
+    //     return error("Symbol in .globalinitvalue directive does not exist"); // TODO name the symbol
+
+    //   auto *WasmSym =
+    //       static_cast<MCSymbolWasm *>(Ctx.getOrCreateSymbol(SymName)); // TODO don't create a global purely because it gets a default value
+
+    //   int32_t Val = std::stoi(ExprTok.getString().str());
+    //   WV.Int32= Val;
+    //   WasmSym->setGlobalInitValue(WV);
+
+    //   // const MCExpr *Expr;
+    //   // SMLoc End;
+    //   // if (Parser.parseExpression(Expr, End))
+    //   //   return error("Cannot parse .globalinitvalue expression: ", Lexer.getTok());
+
+    //   // if (Expr->getKind() != MCExpr::ExprKind::Constant)
+    //   //   return error("Expr of .globalinitvalue directive is not Constant:", Lexer.getTok());
+
+    //   // const MCValue *Val;
+    //   // Expr->evaluateAsValue(&Val, const MCAssembler &Asm)
+
+    //   // size_t NumBits = 0;
+    //   // DirectiveID.getString().drop_front(4).getAsInteger(10, NumBits);
+    //   // Out.emitValue(Val, NumBits / 8, End);
+    //   // return expect(AsmToken::EndOfStatement, "EOL");
+
+    //   // And emit the directive again.
+    //   // TOut.emitGlobalType(WasmSym);
+    //   // return expect(AsmToken::EndOfStatement, "EOL");
+    //   return ParseStatus::Success;
+    // }
+   
 
     if (DirectiveID.getString() == ".tabletype") {
       // .tabletype SYM, ELEMTYPE[, MINSIZE[, MAXSIZE]]

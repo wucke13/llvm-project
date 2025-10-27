@@ -944,6 +944,12 @@ void WasmObjectWriter::writeGlobalSection(ArrayRef<wasm::WasmGlobal> Globals) {
         llvm_unreachable("unexpected type");
       }
     }
+    //  else {
+    //   // TODO decide whether to emit the Global.InitExpr.Inst.Opcode before the body
+    //   for (const uint8_t Byte: Global.InitExpr.Body){
+    //     W->OS << char(Byte);
+    //   }
+    // }
     W->OS << char(wasm::WASM_OPCODE_END);
   }
 
@@ -1653,7 +1659,7 @@ uint64_t WasmObjectWriter::writeOneObject(MCAssembler &Asm,
         LLVM_DEBUG(dbgs() << "  -> segment index: " << Ref.Segment << "\n");
 
       } else if (WS.isGlobal()) {
-        // A "true" Wasm global (currently just __stack_pointer)
+        // A "true" Wasm global
         if (WS.isDefined()) {
           wasm::WasmGlobal Global;
           Global.Type = WS.getGlobalType();
@@ -1662,6 +1668,7 @@ uint64_t WasmObjectWriter::writeOneObject(MCAssembler &Asm,
           switch (Global.Type.Type) {
           case wasm::WASM_TYPE_I32:
             Global.InitExpr.Inst.Opcode = wasm::WASM_OPCODE_I32_CONST;
+            Global.InitExpr.Inst.Value = WS.getGlobalInitValue();
             break;
           case wasm::WASM_TYPE_I64:
             Global.InitExpr.Inst.Opcode = wasm::WASM_OPCODE_I64_CONST;

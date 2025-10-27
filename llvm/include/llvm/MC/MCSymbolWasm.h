@@ -27,6 +27,7 @@ class MCSymbolWasm : public MCSymbol {
   std::optional<StringRef> ExportName;
   wasm::WasmSignature *Signature = nullptr;
   std::optional<wasm::WasmGlobalType> GlobalType;
+  std::optional<wasm::WasmValue> GlobalInitValue;
   std::optional<wasm::WasmTableType> TableType;
 
   /// An expression describing how to calculate the size of a symbol. If a
@@ -136,7 +137,12 @@ public:
     assert(GlobalType);
     return *GlobalType;
   }
+  const wasm::WasmValue &getGlobalInitValue() const {
+    assert(GlobalInitValue);
+    return *GlobalInitValue;
+  }
   void setGlobalType(wasm::WasmGlobalType GT) { GlobalType = GT; }
+  void setGlobalInitValue(wasm::WasmValue WV) { GlobalInitValue = WV; }
 
   bool hasTableType() const { return TableType.has_value(); }
   const wasm::WasmTableType &getTableType() const {

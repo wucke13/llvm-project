@@ -336,15 +336,17 @@ struct WasmTable {
   StringRef SymbolName; // from the "linking" section
 };
 
+union WasmValue {
+  int32_t Int32;
+  int64_t Int64;
+  uint32_t Float32;
+  uint64_t Float64;
+  uint32_t Global;
+};
+
 struct WasmInitExprMVP {
   uint8_t Opcode;
-  union {
-    int32_t Int32;
-    int64_t Int64;
-    uint32_t Float32;
-    uint64_t Float64;
-    uint32_t Global;
-  } Value;
+  WasmValue Value;
 };
 
 // Extended-const init exprs and exprs with GC types are not explicitly
