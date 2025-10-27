@@ -911,7 +911,7 @@ void WasmObjectWriter::writeGlobalSection(ArrayRef<wasm::WasmGlobal> Globals) {
     encodeULEB128(Global.Type.Type, W->OS);
     W->OS << char(Global.Type.Mutable);
     if (Global.InitExpr.Extended) {
-      llvm_unreachable("extected init expressions not supported");
+      llvm_unreachable("extended init expressions not supported");
     } else {
       W->OS << char(Global.InitExpr.Inst.Opcode);
       switch (Global.Type.Type) {
