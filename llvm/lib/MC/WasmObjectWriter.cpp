@@ -1662,15 +1662,19 @@ uint64_t WasmObjectWriter::writeOneObject(MCAssembler &Asm,
           switch (Global.Type.Type) {
           case wasm::WASM_TYPE_I32:
             Global.InitExpr.Inst.Opcode = wasm::WASM_OPCODE_I32_CONST;
+            Global.InitExpr.Inst.Value.Int64 = 132;
             break;
           case wasm::WASM_TYPE_I64:
             Global.InitExpr.Inst.Opcode = wasm::WASM_OPCODE_I64_CONST;
+            Global.InitExpr.Inst.Value.Int64 = 164;
             break;
           case wasm::WASM_TYPE_F32:
             Global.InitExpr.Inst.Opcode = wasm::WASM_OPCODE_F32_CONST;
+            Global.InitExpr.Inst.Value.Float32 = 632.0;
             break;
           case wasm::WASM_TYPE_F64:
             Global.InitExpr.Inst.Opcode = wasm::WASM_OPCODE_F64_CONST;
+            Global.InitExpr.Inst.Value.Float64 = 664;
             break;
           case wasm::WASM_TYPE_EXTERNREF:
             Global.InitExpr.Inst.Opcode = wasm::WASM_OPCODE_REF_NULL;
