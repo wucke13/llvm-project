@@ -916,16 +916,26 @@ void WasmObjectWriter::writeGlobalSection(ArrayRef<wasm::WasmGlobal> Globals) {
       W->OS << char(Global.InitExpr.Inst.Opcode);
       switch (Global.Type.Type) {
       case wasm::WASM_TYPE_I32:
-        encodeSLEB128(0, W->OS);
+        encodeSLEB128(Global.InitExpr.Inst.Value.Int32, W->OS);
         break;
       case wasm::WASM_TYPE_I64:
-        encodeSLEB128(0, W->OS);
+        encodeSLEB128(Global.InitExpr.Inst.Value.Int64, W->OS);
         break;
       case wasm::WASM_TYPE_F32:
-        writeI32(0);
+        // TODO this and the following case would be perfect for std::bit_cast, once LLVM lifts the
+        // minimum supported C++ version from C++17 to C++20
+        {
+          float F32 = Global.InitExpr.Inst.Value.Float32;
+          uint32_t FloatInDisguise = *reinterpret_cast<uint32_t*>(&F32);
+          writeI32(FloatInDisguise);
+        }
         break;
       case wasm::WASM_TYPE_F64:
-        writeI64(0);
+        {
+          double F64 = Global.InitExpr.Inst.Value.Float64;
+          uint64_t FloatInDisguise = *reinterpret_cast<uint64_t*>(&F64);
+          writeI64(FloatInDisguise);
+        }
         break;
       case wasm::WASM_TYPE_EXTERNREF:
         writeValueType(wasm::ValType::EXTERNREF);
